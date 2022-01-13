@@ -1,3 +1,5 @@
+const User = require("../users/users-model");
+
 function logger(req, res, next) {
   const timestamp = new Date().toLocaleString();
   const method = req.method;
@@ -6,9 +8,25 @@ function logger(req, res, next) {
   next();
 }
 
-function validateUserId(req, res, next) {
-  console.log("logger middleware");
-  next();
+//async because we're calling to database
+async function validateUserId(req, res, next) {
+  try {
+    //await because we're requesting from server
+    const user = await User.getById(req.params.id);
+    if (!user) {
+      res.status(404).json({
+        message: "no such user",
+      });
+    } else {
+      //this defines user for the next middleware
+      req.user = user;
+      next();
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "problem finding user",
+    });
+  }
 }
 
 function validateUser(req, res, next) {
