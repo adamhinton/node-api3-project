@@ -1,10 +1,14 @@
 const express = require("express");
 const { logger } = require("./middleware/middleware");
 const server = express();
+const usersRouter = require("./users/users-router");
 
 server.use(express.json());
 
 server.use(logger);
+
+//this doesn't seem correct. 18 35
+server.use("/api/users", usersRouter);
 
 // remember express by default cannot parse JSON in request bodies
 

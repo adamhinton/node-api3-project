@@ -9,16 +9,15 @@ function logger(req, res, next) {
 }
 
 //async because we're calling to database
+//we call this in users-router.js
 async function validateUserId(req, res, next) {
   try {
-    //await because we're requesting from server
     const user = await User.getById(req.params.id);
     if (!user) {
       res.status(404).json({
         message: "no such user",
       });
     } else {
-      //this defines user for the next middleware
       req.user = user;
       next();
     }
