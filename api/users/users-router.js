@@ -13,6 +13,7 @@ const Post = require("../posts/posts-model");
 
 const router = express.Router();
 
+//REMEMBER TO PASS IN NEXT
 router.get("/", (req, res, next) => {
   // RETURN AN ARRAY WITH ALL THE USERS
   User.get()
@@ -23,13 +24,19 @@ router.get("/", (req, res, next) => {
 });
 
 router.get("/:id", validateUserId, (req, res) => {
-  console.log(req.user);
+  res.json(req.user);
 });
 
-router.post("/", validateUser, (req, res) => {
+//REMEMBER TO PASS IN NEXT
+router.post("/", validateUser, (req, res, next) => {
   // RETURN THE NEWLY CREATED USER OBJECT
   // this needs a middleware to check that the request body is valid
-  console.log(req.name);
+  User.insert({ name: req.name })
+    .then((newUser) => {
+      res.status(201).json(newUser);
+    })
+    //this is the same as .catch(err =>{next(err)})
+    .catch(next);
 });
 
 router.put("/:id", validateUserId, validateUser, (req, res) => {
